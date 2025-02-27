@@ -37,32 +37,33 @@ int main() {
 #include <stdlib.h>
 #include <string.h>
 
-char *strjoin_va(int count, ...) {
-    if (count < 1)
-        return NULL;
+char	*strjoin_va(int count, ...)
+{
+	char	*joined;
+	char	*str;
+	va_list	args;
+	int		i;
+	int		len;
 
-    va_list args;
-    va_start(args, count);
-
-    int total_length = 0;
-    for (int i = 0; i < count; i++) {
-        char *str = va_arg(args, char *);
-        total_length += strlen(str);
-    }
-    va_end(args);
-
-    char *result = malloc(total_length + 1);
-    if (!result)
-        return NULL;
-    result[0] = '\0';
-
-    va_start(args, count);
-    for (int i = 0; i < count; i++) {
-        strcat(result, va_arg(args, char *));
-    }
-    va_end(args);
-
-    return result;
+	if (count < 1)
+		return (NULL);
+	i = count--;
+	len = 0;
+	va_start(args, count);
+	while (i--)
+	{
+		str = va_arg(args, char *);
+		len += strlen(str);
+	}
+	va_end(args);
+	joined = malloc(len + 1);
+	if (!joined)
+		return (NULL);
+	*joined = 0;
+	va_start(args, count);
+	while (i++ < count)
+		strcat(joined, va_arg(args, char*));
+	return (va_end(args), joined);
 }
 ```
 

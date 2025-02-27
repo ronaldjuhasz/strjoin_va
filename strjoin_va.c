@@ -6,7 +6,7 @@
 /*   By: rjuhasz <rjuhasz@student.42vienna.com>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 10:30:59 by rjuhasz           #+#    #+#             */
-/*   Updated: 2025/02/27 10:56:12 by rjuhasz          ###   ########.fr       */
+/*   Updated: 2025/02/27 12:01:41 by rjuhasz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,21 @@ char	*strjoin_va(int count, ...)
 
 	if (count < 1)
 		return (NULL);
-	i = 0;
+	i = count--;
 	len = 0;
 	va_start(args, count);
-	while (i < count)
+	while (i--)
 	{
 		str = va_arg(args, char *);
 		len += strlen(str);
-		i++;
 	}
 	va_end(args);
-	joined = malloc(sizeof joined + 1);
+	joined = malloc(len + 1);
+	if (!joined)
+		return (NULL);
 	*joined = 0;
 	va_start(args, count);
-	i = 0;
-	while (i < count)
-	{
-		strcat(joined, va_arg(args, char*));
-		i++;
-	}
-	va_end(args);
-	return (joined);
-}
-
-int main() {
-    char *result = strjoin_va(3, "Hello", " ", "World!");
-    if (result) {
-        printf("%s\n", result);
-        free(result);
-    }
-    return 0;
+	while (i++ < count)
+		strcat(joined, va_arg(args, char *));
+	return (va_end(args), joined);
 }
