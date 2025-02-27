@@ -7,6 +7,7 @@ A simple C function that joins a variable number of strings into a single dynami
 - Uses `stdarg.h` to handle a variable number of arguments.
 - Dynamically allocates memory for the concatenated result.
 - Returns a pointer to the joined string (must be freed by the caller).
+- Uses safer implementations of `strlen` (`ft_strlen`) and `strcat` (`ft_strcat`).
 
 ## Usage
 ### Function Prototype
@@ -35,35 +36,60 @@ int main() {
 ```c
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 
-char	*strjoin_va(int count, ...)
-{
-	char	*joined;
-	char	*str;
-	va_list	args;
-	int		i;
-	int		len;
+size_t ft_strlen(const char *s) {
+    size_t i = 0;
+    if (!s)
+        return 0;
+    while (s[i] != '\0')
+        i++;
+    return i;
+}
 
-	if (count < 1)
-		return (NULL);
-	i = count--;
-	len = 0;
-	va_start(args, count);
-	while (i--)
-	{
-		str = va_arg(args, char *);
-		len += strlen(str);
-	}
-	va_end(args);
-	joined = malloc(len + 1);
-	if (!joined)
-		return (NULL);
-	*joined = 0;
-	va_start(args, count);
-	while (i++ < count)
-		strcat(joined, va_arg(args, char*));
-	return (va_end(args), joined);
+char *ft_strcat(char *str, char *add) {
+    int start;
+    int i;
+
+    if (!str)
+        return NULL;
+    if (!add)
+        return str;
+    start = 0;
+    while (str[start])
+        start++;
+    i = 0;
+    while (add[i])
+        str[start++] = add[i++];
+    str[start] = 0;
+    return str;
+}
+
+char *strjoin_va(int count, ...) {
+    char *joined;
+    char *str;
+    va_list args;
+    int i;
+    int len;
+
+    if (count < 1)
+        return NULL;
+    i = count--;
+    len = 0;
+    va_start(args, count);
+    while (i--) {
+        str = va_arg(args, char *);
+        len += ft_strlen(str);
+    }
+    va_end(args);
+    joined = malloc(len + 1);
+    if (!joined)
+        return NULL;
+    *joined = 0;
+    va_start(args, count);
+    while (i++ < count)
+        ft_strcat(joined, va_arg(args, char *));
+    return (va_end(args), joined);
 }
 ```
 
@@ -75,6 +101,7 @@ gcc -o program main.c strjoin_va.c
 
 ## Notes
 - The function dynamically allocates memory, so the caller must `free()` the returned string.
+- Ensures safer string operations by using `ft_strlen` and `ft_strcat`.
 - Ensure all passed strings are valid (non-null).
 - The function does not handle a separator. If needed, you can extend it to support a delimiter.
 
