@@ -105,6 +105,8 @@ gcc -o program main.c strjoin_va.c
 - Ensure all passed strings are valid (non-null).
 - The function does not handle a separator. If needed, you can extend it to support a delimiter.
 
+❗ Important note: this function is currently against 42's official NORM rules, please do not use it in your 42 projects ❗
+
 ## License
 This project is open-source under the MIT License.
 
